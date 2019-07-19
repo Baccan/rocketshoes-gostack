@@ -7,7 +7,7 @@ export default function cart(state = [], action) {
   // state é o estado anterior a alteração do state
 
   switch (action.type) {
-    case 'ADD_TO_CART':
+    case '@cart/ADD':
       return produce(state, draft => {
         const productIndex = draft.findIndex(p => p.id === action.product.id);
 
@@ -26,7 +26,7 @@ export default function cart(state = [], action) {
     //     amount: 1,
     //   },
     // ];
-    case 'REMOVE_FROM_CART':
+    case '@cart/REMOVE':
       return produce(state, draft => {
         const productIndex = draft.findIndex(p => p.id === action.id);
 

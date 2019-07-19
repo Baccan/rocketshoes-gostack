@@ -61,10 +61,12 @@ class Home extends Component {
   }
 }
 
+// Converte actions do redux em props do componente
 const mapDispatchToProps = dispatch =>
   bindActionCreators(CartActions, dispatch);
 
 export default connect(
+  // null pois não existe o mapStateToProps neste componente
   null,
   mapDispatchToProps
 )(Home);
