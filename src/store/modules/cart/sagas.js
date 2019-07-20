@@ -1,17 +1,34 @@
-import { call, put, all, takeLatest } from 'redux-saga/effects';
+import { call, select, put, all, takeLatest } from 'redux-saga/effects';
 
 import api from '../../../services/api';
+import { formatPrice } from '../../../util/format';
 
-import { addToCartSuccess } from './actions';
+import { addToCartSuccess, updateAmount } from './actions';
 
 // * é uma funcionalidade do javascript chamada generator. É um async function, o babel transforma alguns assync functions para estes generators em alguns navegadores.
 
 // Foi utilizado desta forma por ser mais poderoso que o async await. Ele pode realizar mais funções que o async não tem suporte.
 function* addToCart({ id }) {
-  // yield = await
-  const response = yield call(api.get, `/products/${id}`);
+  const productExists = yield select(state =>
+    state.cart.find(p => p.id === id)
+  );
 
-  yield put(addToCartSuccess(response.data));
+  if (productExists) {
+    const amount = productExists.amount + 1;
+
+    yield put(updateAmount(id, amount));
+  } else {
+    // yield = await
+    const response = yield call(api.get, `/products/${id}`);
+
+    const data = {
+      ...response.data,
+      amount: 1,
+      priceFormatted: formatPrice(response.data.price),
+    };
+
+    yield put(addToCartSuccess(data));
+  }
 }
 
 export default all([
