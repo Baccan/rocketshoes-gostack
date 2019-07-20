@@ -31,6 +31,11 @@ class Home extends Component {
     const { addToCartRequest } = this.props;
 
     addToCartRequest(id);
+
+    // Caso isso seja feito (redirecionar rota), o javascript por padrão não aguarda a resposta da request realizada pelo saga.
+    // Colocar um await na frente de addToCartRequest() também não irá funcionar pois o dispara uma action com objeto do javascript.
+    // A navegação deve ser feita dentro do saga, e não dentro do componente.
+    // this.props.history.push('/cart');
   };
 
   render() {
