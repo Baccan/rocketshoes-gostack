@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+// import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { MdAddShoppingCart } from 'react-icons/md';
@@ -9,26 +10,48 @@ import * as CartActions from '../../store/modules/cart/actions';
 
 import { ProductList } from './styles';
 
-class Home extends Component {
-  state = {
-    products: [],
-  };
+// class Home extends Component {
+function Home({ amount, addToCartRequest }) {
+  const [products, setProducts] = useState([])
 
-  async componentDidMount() {
-    const response = await api.get('products');
+  // state = {
+  //   products: [],
+  // };
 
-    // Para evitar que a tela renderize várias vezes por executar funções, o ideal é realizar a formação do conteúdo antes de exibi-lo para economizar recursos.
-    // Desta forma:
-    const data = response.data.map(product => ({
-      ...product,
-      priceFormatted: formatPrice(product.price),
-    }));
+  useEffect(() => {
+    async function loadProducts(){
+      const response = await api.get('products');
 
-    this.setState({ products: data });
-  }
+      // Para evitar que a tela renderize várias vezes por executar funções, o ideal é realizar a formação do conteúdo antes de exibi-lo para economizar recursos.
+      // Desta forma:
+      const data = response.data.map(product => ({
+        ...product,
+        priceFormatted: formatPrice(product.price),
+      }));
 
-  handleAddproduct = id => {
-    const { addToCartRequest } = this.props;
+      setProducts(data);
+    }
+
+    loadProducts();
+  }, [])
+  /*
+    async componentDidMount() {
+      const response = await api.get('products');
+
+      // Para evitar que a tela renderize várias vezes por executar funções, o ideal é realizar a formação do conteúdo antes de exibi-lo para economizar recursos.
+      // Desta forma:
+      const data = response.data.map(product => ({
+        ...product,
+        priceFormatted: formatPrice(product.price),
+      }));
+
+      this.setState({ products: data });
+    }
+  */
+
+  // handleAddproduct = id => {
+  function handleAddproduct(id) {
+    // const { addToCartRequest } = this.props;
 
     addToCartRequest(id);
 
@@ -38,9 +61,9 @@ class Home extends Component {
     // this.props.history.push('/cart');
   };
 
-  render() {
-    const { products } = this.state;
-    const { amount } = this.props;
+  // render() {
+    // const { products } = this.state;
+    // const { amount } = this.props;
 
     return (
       <ProductList>
@@ -52,7 +75,8 @@ class Home extends Component {
 
             <button
               type="button"
-              onClick={() => this.handleAddproduct(product.id)}
+              // onClick={() => this.handleAddproduct(product.id)}
+              onClick={() => handleAddproduct(product.id)}
             >
               <div>
                 <MdAddShoppingCart size={16} color="#FFF" />{' '}
@@ -66,7 +90,7 @@ class Home extends Component {
       </ProductList>
     );
   }
-}
+// }
 
 const mapStateToProps = state => ({
   amount: state.cart.reduce((amount, product) => {
